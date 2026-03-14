@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MisGastos">
 <title>MisGastos</title>
-<link rel="manifest" href="data:application/json,{%22name%22:%22MisGastos%22,%22short_name%22:%22MisGastos%22,%22display%22:%22standalone%22,%22background_color%22:%22%230a0f1a%22,%22theme_color%22:%22%230a0f1a%22,%22start_url%22:%22.%22}">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -395,6 +395,94 @@ html, body {
   box-shadow: 0 2px 10px rgba(56,189,248,.25);
 }
 
+
+/* ══ SALDO NETO CARD ══ */
+.saldo-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px; margin-bottom: 10px;
+  position: relative; overflow: hidden;
+}
+.saldo-card::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.saldo-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 12px;
+}
+.saldo-monto-wrap {}
+.saldo-lbl { font-size: .65rem; color: var(--text3); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
+.saldo-monto { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; }
+.saldo-monto.positive { color: var(--accent3); }
+.saldo-monto.negative { color: var(--danger); }
+.saldo-pct-wrap { text-align: right; }
+.saldo-pct { font-family: var(--mono); font-size: 1.1rem; font-weight: 600; }
+.saldo-pct-lbl { font-size: .62rem; color: var(--text3); margin-top: 2px; }
+
+/* barra de ahorro */
+.ahorro-bar-wrap { margin-top: 4px; }
+.ahorro-bar-track {
+  height: 8px; border-radius: 4px;
+  background: var(--border2); overflow: hidden;
+}
+.ahorro-bar-fill {
+  height: 100%; border-radius: 4px;
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+}
+
+/* ══ MINI CARDS ingresos/gastos ══ */
+.mini-cards {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 10px;
+}
+.mini-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 13px 14px;
+  position: relative; overflow: hidden;
+}
+.mini-card::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.mini-card.ing::after  { background: linear-gradient(90deg, var(--accent3), transparent); }
+.mini-card.gas::after  { background: linear-gradient(90deg, var(--danger), transparent); }
+.mini-card .card-lbl   { font-size: .62rem; color: var(--text3); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 5px; }
+.mini-card .card-val   { font-family: var(--mono); font-size: 1rem; font-weight: 500; }
+.mini-card .card-val.ing { color: var(--accent3); }
+.mini-card .card-val.gas { color: var(--danger); }
+.mini-card .card-sub   { font-size: .62rem; color: var(--text3); margin-top: 3px; }
+
+/* ══ DOS DOUGHNUTS lado a lado ══ */
+.donuts-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 14px;
+}
+.donut-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 12px;
+}
+.donut-lbl {
+  font-size: .62rem; color: var(--text3); text-transform: uppercase;
+  letter-spacing: .8px; margin-bottom: 8px; text-align: center;
+}
+.donut-wrap { position: relative; height: 110px; }
+.donut-empty {
+  display: flex; align-items: center; justify-content: center;
+  height: 110px; font-size: .72rem; color: var(--text3); text-align: center;
+  line-height: 1.5;
+}
+
+/* ══ FAB — posición más arriba ══ */
+.fab {
+  position: fixed; bottom: 80px; right: 22px; z-index: 100;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--accent); border: none; color: var(--bg);
+  font-size: 1.5rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(56,189,248,.35);
+  transition: transform .2s, box-shadow .2s;
+}
+.fab:active { transform: scale(.92); box-shadow: 0 2px 10px rgba(56,189,248,.2); }
+
 /* ══ BOTTOM SHEET OVERLAY ══ */
 .sheet-overlay {
   position: fixed; inset: 0; z-index: 200;
@@ -609,38 +697,7 @@ html, body {
 /* monto color dinámico */
 .qe-monto-input.ingreso-mode { color: var(--accent3); }
 
-/* ══ BALANCE CARDS (fila completa) ══ */
-.balance-row {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 10px; margin-bottom: 10px;
-}
-.balance-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 14px 16px;
-  position: relative; overflow: hidden;
-}
-.balance-card::after {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-}
-.balance-card.bc-ing::after  { background: linear-gradient(90deg, var(--accent3), transparent); }
-.balance-card.bc-saldo::after { background: linear-gradient(90deg, var(--accent), transparent); }
-.balance-card.bc-ahorro::after { background: linear-gradient(90deg, #a78bfa, transparent); }
-.balance-card.bc-neg::after { background: linear-gradient(90deg, var(--danger), transparent); }
-.balance-card .card-lbl { font-size: .65rem; color: var(--text3); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; font-weight: 500; }
-.balance-card .card-val { font-family: var(--mono); font-size: 1.1rem; font-weight: 500; }
-.balance-card .card-val.positive { color: var(--accent3); }
-.balance-card .card-val.negative { color: var(--danger); }
-.balance-card .card-val.neutral  { color: var(--text2); }
-.balance-card .card-sub { font-size: .67rem; color: var(--text3); margin-top: 4px; }
-
-/* tasa ahorro badge */
-.ahorro-badge {
-  display: inline-block; font-size: .68rem; font-weight: 700;
-  padding: 2px 8px; border-radius: 20px; margin-top: 4px;
-}
-.ahorro-badge.good { background: rgba(52,211,153,.15); color: var(--accent3); }
-.ahorro-badge.mid  { background: rgba(251,146,60,.15);  color: var(--warn); }
-.ahorro-badge.bad  { background: rgba(248,113,113,.15); color: var(--danger); }
+/* balance cards — reemplazado */
 
 /* historial item ingreso */
 .gasto-item.ingreso .gasto-amt { color: var(--accent3); }
@@ -743,6 +800,8 @@ html, body {
 .dp-item.selected { color: var(--text); font-size: 1.15rem; font-weight: 600; }
 
 </style>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNDAwIDQxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgc3R5bGU9Im1heC13aWR0aDozMjBweDtkaXNwbGF5OmJsb2NrO21hcmdpbjowIGF1dG8iPgogIDxkZWZzPgogICAgPCEtLSBGb25kbzogZ3JhZGllbnRlIHJhZGlhbCBvc2N1cm8gY29uIHByb2Z1bmRpZGFkIC0tPgogICAgPHJhZGlhbEdyYWRpZW50IGlkPSJiZyIgY3g9IjQwJSIgY3k9IjM1JSIgcj0iNzAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFhMjY0MCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwNjBhMTIiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CgogICAgPCEtLSBDw61yY3VsbzogZ3JhZGllbnRlIGFuZ3VsYXIgcXVlIHNpbXVsYSBsdXogbWV0w6FsaWNhIC0tPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJyaW5nIiB4MT0iMjAlIiB5MT0iMTAlIiB4Mj0iODAlIiB5Mj0iOTAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdlZThmZiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjMwJSIgc3RvcC1jb2xvcj0iIzM4YmRmOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjY1JSIgc3RvcC1jb2xvcj0iIzBlN2FhYiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxZGU5YjYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CgogICAgPCEtLSAkIHPDrW1ib2xvOiBncmFkaWVudGUgdmVydGljYWwgcGxhdGVhZG8gLS0+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImRvbGxhciIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMjglIiBzdG9wLWNvbG9yPSIjZThmNGZmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTUlIiBzdG9wLWNvbG9yPSIjYzJkOGYwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iODAlIiBzdG9wLWNvbG9yPSIjZGJlZWZmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2E4YzhlOCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KCiAgICA8IS0tIFJlc3BsYW5kb3IgaW50ZXJpb3IgZGVsIGPDrXJjdWxvIC0tPgogICAgPHJhZGlhbEdyYWRpZW50IGlkPSJnbG93IiBjeD0iNTAlIiBjeT0iNTAlIiByPSI1MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMzhiZGY4IiBzdG9wLW9wYWNpdHk9IjAuMTIiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMzhiZGY4IiBzdG9wLW9wYWNpdHk9IjAiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CgogICAgPCEtLSBSZWZsZWpvIHN1cGVyaW9yIGRlbCDDrWNvbm8gKGx1eiBlc3BlY3VsYXIpIC0tPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJzaGluZSIgeDE9IjMwJSIgeTE9IjAlIiB4Mj0iNzAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4wNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjAyIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgoKICAgIDxjbGlwUGF0aCBpZD0icm91bmRlZCI+CiAgICAgIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiByeD0iODAiLz4KICAgIDwvY2xpcFBhdGg+CiAgPG1hc2sgaWQ9ImltYWdpbmUtdGV4dC1nYXBzLTVteXN1YyIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSI0MTAiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iMTM4LjM0Mzc1IiB5PSI4MS4wMDAwMTUyNTg3ODkwNiIgd2lkdGg9IjEyMy4zMTI1IiBoZWlnaHQ9IjIwOSIgZmlsbD0iYmxhY2siIHJ4PSIyIi8+PHJlY3QgeD0iMTM4LjM0Mzc1IiB5PSI4MS4wMDAwMTUyNTg3ODkwNiIgd2lkdGg9IjEyMy4zMTI1IiBoZWlnaHQ9IjIwOSIgZmlsbD0iYmxhY2siIHJ4PSIyIi8+PC9tYXNrPjwvZGVmcz4KCiAgPCEtLSBGb25kbyBjb24gZ3JhZGllbnRlIHJhZGlhbCAtLT4KICA8cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgcng9IjgwIiBmaWxsPSJ1cmwoI2JnKSIgc3R5bGU9InN0cm9rZTpub25lO2NvbG9yOnJnYigyNTUsIDI1NSwgMjU1KTtzdHJva2Utd2lkdGg6MXB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO29wYWNpdHk6MTtmb250LWZhbWlseTomcXVvdDtBbnRocm9waWMgU2FucyZxdW90OywgLWFwcGxlLXN5c3RlbSwgQmxpbmtNYWNTeXN0ZW1Gb250LCAmcXVvdDtTZWdvZSBVSSZxdW90Oywgc2Fucy1zZXJpZjtmb250LXNpemU6MTZweDtmb250LXdlaWdodDo0MDA7dGV4dC1hbmNob3I6c3RhcnQ7ZG9taW5hbnQtYmFzZWxpbmU6YXV0byIvPgoKICA8IS0tIFRleHR1cmEgc3V0aWw6IHB1bnRvcyBmaW5vcyBlbiBjdWFkcsOtY3VsYSAtLT4KICA8cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgcng9IjgwIiBmaWxsPSJ1cmwoI3NoaW5lKSIgc3R5bGU9InN0cm9rZTpub25lO2NvbG9yOnJnYigyNTUsIDI1NSwgMjU1KTtzdHJva2Utd2lkdGg6MXB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO29wYWNpdHk6MTtmb250LWZhbWlseTomcXVvdDtBbnRocm9waWMgU2FucyZxdW90OywgLWFwcGxlLXN5c3RlbSwgQmxpbmtNYWNTeXN0ZW1Gb250LCAmcXVvdDtTZWdvZSBVSSZxdW90Oywgc2Fucy1zZXJpZjtmb250LXNpemU6MTZweDtmb250LXdlaWdodDo0MDA7dGV4dC1hbmNob3I6c3RhcnQ7ZG9taW5hbnQtYmFzZWxpbmU6YXV0byIvPgoKICA8IS0tIFJlc3BsYW5kb3IgY2VudHJhbCBkaWZ1c28gLS0+CiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMjAwIiByPSIxNjAiIGZpbGw9InVybCgjZ2xvdykiIHN0eWxlPSJzdHJva2U6bm9uZTtjb2xvcjpyZ2IoMjU1LCAyNTUsIDI1NSk7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtvcGFjaXR5OjE7Zm9udC1mYW1pbHk6JnF1b3Q7QW50aHJvcGljIFNhbnMmcXVvdDssIC1hcHBsZS1zeXN0ZW0sIEJsaW5rTWFjU3lzdGVtRm9udCwgJnF1b3Q7U2Vnb2UgVUkmcXVvdDssIHNhbnMtc2VyaWY7Zm9udC1zaXplOjE2cHg7Zm9udC13ZWlnaHQ6NDAwO3RleHQtYW5jaG9yOnN0YXJ0O2RvbWluYW50LWJhc2VsaW5lOmF1dG8iLz4KCiAgPCEtLSBTb21icmEgZGVsIGPDrXJjdWxvIChoYWxvIGV4dGVyaW9yKSAtLT4KICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDIiIHI9IjEzMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwZDFhIiBzdHJva2Utd2lkdGg9IjE0IiBvcGFjaXR5PSIwLjUiIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOnJnYigwLCAxMywgMjYpO2NvbG9yOnJnYigyNTUsIDI1NSwgMjU1KTtzdHJva2Utd2lkdGg6MTRweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtvcGFjaXR5OjAuNTtmb250LWZhbWlseTomcXVvdDtBbnRocm9waWMgU2FucyZxdW90OywgLWFwcGxlLXN5c3RlbSwgQmxpbmtNYWNTeXN0ZW1Gb250LCAmcXVvdDtTZWdvZSBVSSZxdW90Oywgc2Fucy1zZXJpZjtmb250LXNpemU6MTZweDtmb250LXdlaWdodDo0MDA7dGV4dC1hbmNob3I6c3RhcnQ7ZG9taW5hbnQtYmFzZWxpbmU6YXV0byIvPgoKICA8IS0tIEPDrXJjdWxvIHByaW5jaXBhbCBjb24gZ3JhZGllbnRlIG1ldMOhbGljbyAtLT4KICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjEzMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI3JpbmcpIiBzdHJva2Utd2lkdGg9IjciIHN0eWxlPSJmaWxsOm5vbmU7Y29sb3I6cmdiKDI1NSwgMjU1LCAyNTUpO3N0cm9rZS13aWR0aDo3cHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7b3BhY2l0eToxO2ZvbnQtZmFtaWx5OiZxdW90O0FudGhyb3BpYyBTYW5zJnF1b3Q7LCAtYXBwbGUtc3lzdGVtLCBCbGlua01hY1N5c3RlbUZvbnQsICZxdW90O1NlZ29lIFVJJnF1b3Q7LCBzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxNnB4O2ZvbnQtd2VpZ2h0OjQwMDt0ZXh0LWFuY2hvcjpzdGFydDtkb21pbmFudC1iYXNlbGluZTphdXRvIi8+CgogIDwhLS0gUmVmbGVqbyBzdXBlcmlvciBkZWwgY8OtcmN1bG8gKGFyY28gZGUgbHV6KSAtLT4KICA8cGF0aCBkPSJNIDEwMiAxNTggQSAxMzAgMTMwIDAgMCAxIDI5OCAxNTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2E4ZWVmZiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC4zNSIgbWFzaz0idXJsKCNpbWFnaW5lLXRleHQtZ2Fwcy01bXlzdWMpIiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTpyZ2IoMTY4LCAyMzgsIDI1NSk7Y29sb3I6cmdiKDI1NSwgMjU1LCAyNTUpO3N0cm9rZS13aWR0aDoyLjVweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46bWl0ZXI7b3BhY2l0eTowLjM1O2ZvbnQtZmFtaWx5OiZxdW90O0FudGhyb3BpYyBTYW5zJnF1b3Q7LCAtYXBwbGUtc3lzdGVtLCBCbGlua01hY1N5c3RlbUZvbnQsICZxdW90O1NlZ29lIFVJJnF1b3Q7LCBzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxNnB4O2ZvbnQtd2VpZ2h0OjQwMDt0ZXh0LWFuY2hvcjpzdGFydDtkb21pbmFudC1iYXNlbGluZTphdXRvIi8+CgogIDwhLS0gU8OtbWJvbG8gJCBjb24gZ3JhZGllbnRlIHBsYXRlYWRvIC0tPgogIDx0ZXh0IHg9IjIwMCIgeT0iMjQ4IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxODAiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9InVybCgjZG9sbGFyKSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3R5bGU9InN0cm9rZTpub25lO2NvbG9yOnJnYigyNTUsIDI1NSwgMjU1KTtzdHJva2Utd2lkdGg6MXB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO29wYWNpdHk6MTtmb250LWZhbWlseTpHZW9yZ2lhLCBzZXJpZjtmb250LXNpemU6MTgwcHg7Zm9udC13ZWlnaHQ6NzAwO3RleHQtYW5jaG9yOm1pZGRsZTtkb21pbmFudC1iYXNlbGluZTphdXRvIj4kPC90ZXh0PgoKICA8IS0tIFJlZmxlam8gZXNwZWN1bGFyIHNvYnJlIGVsICQgKGJyaWxsbyBzdXBlcmlvciBpenF1aWVyZG8pIC0tPgogIDx0ZXh0IHg9IjIwMCIgeT0iMjQ4IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxODAiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjA4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTpyZ2IoMjU1LCAyNTUsIDI1NSk7Y29sb3I6cmdiKDI1NSwgMjU1LCAyNTUpO3N0cm9rZS13aWR0aDoxcHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7b3BhY2l0eTowLjA4O2ZvbnQtZmFtaWx5Okdlb3JnaWEsIHNlcmlmO2ZvbnQtc2l6ZToxODBweDtmb250LXdlaWdodDo3MDA7dGV4dC1hbmNob3I6bWlkZGxlO2RvbWluYW50LWJhc2VsaW5lOmF1dG8iPiQ8L3RleHQ+CgogIDwhLS0gU2hpbmUgb3ZlcmxheSBlc3F1aW5hIHN1cGVyaW9yIGl6cXVpZXJkYSAtLT4KICA8ZWxsaXBzZSBjeD0iMTQ1IiBjeT0iMTMwIiByeD0iNzAiIHJ5PSI0NSIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4wMyIgdHJhbnNmb3JtPSJyb3RhdGUoLTIwIDE0NSAxMzApIiBzdHlsZT0iZmlsbDpyZ2IoMjU1LCAyNTUsIDI1NSk7c3Ryb2tlOm5vbmU7Y29sb3I6cmdiKDI1NSwgMjU1LCAyNTUpO3N0cm9rZS13aWR0aDoxcHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7b3BhY2l0eTowLjAzO2ZvbnQtZmFtaWx5OiZxdW90O0FudGhyb3BpYyBTYW5zJnF1b3Q7LCAtYXBwbGUtc3lzdGVtLCBCbGlua01hY1N5c3RlbUZvbnQsICZxdW90O1NlZ29lIFVJJnF1b3Q7LCBzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxNnB4O2ZvbnQtd2VpZ2h0OjQwMDt0ZXh0LWFuY2hvcjpzdGFydDtkb21pbmFudC1iYXNlbGluZTphdXRvIi8+Cjwvc3ZnPg==">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNDAwIDQxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgc3R5bGU9Im1heC13aWR0aDozMjBweDtkaXNwbGF5OmJsb2NrO21hcmdpbjowIGF1dG8iPgogIDxkZWZzPgogICAgPCEtLSBGb25kbzogZ3JhZGllbnRlIHJhZGlhbCBvc2N1cm8gY29uIHByb2Z1bmRpZGFkIC0tPgogICAgPHJhZGlhbEdyYWRpZW50IGlkPSJiZyIgY3g9IjQwJSIgY3k9IjM1JSIgcj0iNzAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFhMjY0MCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwNjBhMTIiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CgogICAgPCEtLSBDw61yY3VsbzogZ3JhZGllbnRlIGFuZ3VsYXIgcXVlIHNpbXVsYSBsdXogbWV0w6FsaWNhIC0tPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJyaW5nIiB4MT0iMjAlIiB5MT0iMTAlIiB4Mj0iODAlIiB5Mj0iOTAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdlZThmZiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjMwJSIgc3RvcC1jb2xvcj0iIzM4YmRmOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjY1JSIgc3RvcC1jb2xvcj0iIzBlN2FhYiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxZGU5YjYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CgogICAgPCEtLSAkIHPDrW1ib2xvOiBncmFkaWVudGUgdmVydGljYWwgcGxhdGVhZG8gLS0+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImRvbGxhciIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMjglIiBzdG9wLWNvbG9yPSIjZThmNGZmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTUlIiBzdG9wLWNvbG9yPSIjYzJkOGYwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iODAlIiBzdG9wLWNvbG9yPSIjZGJlZWZmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2E4YzhlOCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KCiAgICA8IS0tIFJlc3BsYW5kb3IgaW50ZXJpb3IgZGVsIGPDrXJjdWxvIC0tPgogICAgPHJhZGlhbEdyYWRpZW50IGlkPSJnbG93IiBjeD0iNTAlIiBjeT0iNTAlIiByPSI1MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMzhiZGY4IiBzdG9wLW9wYWNpdHk9IjAuMTIiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMzhiZGY4IiBzdG9wLW9wYWNpdHk9IjAiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CgogICAgPCEtLSBSZWZsZWpvIHN1cGVyaW9yIGRlbCDDrWNvbm8gKGx1eiBlc3BlY3VsYXIpIC0tPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJzaGluZSIgeDE9IjMwJSIgeTE9IjAlIiB4Mj0iNzAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4wNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjAyIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgoKICAgIDxjbGlwUGF0aCBpZD0icm91bmRlZCI+CiAgICAgIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiByeD0iODAiLz4KICAgIDwvY2xpcFBhdGg+CiAgPG1hc2sgaWQ9ImltYWdpbmUtdGV4dC1nYXBzLTVteXN1YyIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSI0MTAiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iMTM4LjM0Mzc1IiB5PSI4MS4wMDAwMTUyNTg3ODkwNiIgd2lkdGg9IjEyMy4zMTI1IiBoZWlnaHQ9IjIwOSIgZmlsbD0iYmxhY2siIHJ4PSIyIi8+PHJlY3QgeD0iMTM4LjM0Mzc1IiB5PSI4MS4wMDAwMTUyNTg3ODkwNiIgd2lkdGg9IjEyMy4zMTI1IiBoZWlnaHQ9IjIwOSIgZmlsbD0iYmxhY2siIHJ4PSIyIi8+PC9tYXNrPjwvZGVmcz4KCiAgPCEtLSBGb25kbyBjb24gZ3JhZGllbnRlIHJhZGlhbCAtLT4KICA8cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgcng9IjgwIiBmaWxsPSJ1cmwoI2JnKSIgc3R5bGU9InN0cm9rZTpub25lO2NvbG9yOnJnYigyNTUsIDI1NSwgMjU1KTtzdHJva2Utd2lkdGg6MXB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO29wYWNpdHk6MTtmb250LWZhbWlseTomcXVvdDtBbnRocm9waWMgU2FucyZxdW90OywgLWFwcGxlLXN5c3RlbSwgQmxpbmtNYWNTeXN0ZW1Gb250LCAmcXVvdDtTZWdvZSBVSSZxdW90Oywgc2Fucy1zZXJpZjtmb250LXNpemU6MTZweDtmb250LXdlaWdodDo0MDA7dGV4dC1hbmNob3I6c3RhcnQ7ZG9taW5hbnQtYmFzZWxpbmU6YXV0byIvPgoKICA8IS0tIFRleHR1cmEgc3V0aWw6IHB1bnRvcyBmaW5vcyBlbiBjdWFkcsOtY3VsYSAtLT4KICA8cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgcng9IjgwIiBmaWxsPSJ1cmwoI3NoaW5lKSIgc3R5bGU9InN0cm9rZTpub25lO2NvbG9yOnJnYigyNTUsIDI1NSwgMjU1KTtzdHJva2Utd2lkdGg6MXB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO29wYWNpdHk6MTtmb250LWZhbWlseTomcXVvdDtBbnRocm9waWMgU2FucyZxdW90OywgLWFwcGxlLXN5c3RlbSwgQmxpbmtNYWNTeXN0ZW1Gb250LCAmcXVvdDtTZWdvZSBVSSZxdW90Oywgc2Fucy1zZXJpZjtmb250LXNpemU6MTZweDtmb250LXdlaWdodDo0MDA7dGV4dC1hbmNob3I6c3RhcnQ7ZG9taW5hbnQtYmFzZWxpbmU6YXV0byIvPgoKICA8IS0tIFJlc3BsYW5kb3IgY2VudHJhbCBkaWZ1c28gLS0+CiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMjAwIiByPSIxNjAiIGZpbGw9InVybCgjZ2xvdykiIHN0eWxlPSJzdHJva2U6bm9uZTtjb2xvcjpyZ2IoMjU1LCAyNTUsIDI1NSk7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtvcGFjaXR5OjE7Zm9udC1mYW1pbHk6JnF1b3Q7QW50aHJvcGljIFNhbnMmcXVvdDssIC1hcHBsZS1zeXN0ZW0sIEJsaW5rTWFjU3lzdGVtRm9udCwgJnF1b3Q7U2Vnb2UgVUkmcXVvdDssIHNhbnMtc2VyaWY7Zm9udC1zaXplOjE2cHg7Zm9udC13ZWlnaHQ6NDAwO3RleHQtYW5jaG9yOnN0YXJ0O2RvbWluYW50LWJhc2VsaW5lOmF1dG8iLz4KCiAgPCEtLSBTb21icmEgZGVsIGPDrXJjdWxvIChoYWxvIGV4dGVyaW9yKSAtLT4KICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDIiIHI9IjEzMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwZDFhIiBzdHJva2Utd2lkdGg9IjE0IiBvcGFjaXR5PSIwLjUiIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOnJnYigwLCAxMywgMjYpO2NvbG9yOnJnYigyNTUsIDI1NSwgMjU1KTtzdHJva2Utd2lkdGg6MTRweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtvcGFjaXR5OjAuNTtmb250LWZhbWlseTomcXVvdDtBbnRocm9waWMgU2FucyZxdW90OywgLWFwcGxlLXN5c3RlbSwgQmxpbmtNYWNTeXN0ZW1Gb250LCAmcXVvdDtTZWdvZSBVSSZxdW90Oywgc2Fucy1zZXJpZjtmb250LXNpemU6MTZweDtmb250LXdlaWdodDo0MDA7dGV4dC1hbmNob3I6c3RhcnQ7ZG9taW5hbnQtYmFzZWxpbmU6YXV0byIvPgoKICA8IS0tIEPDrXJjdWxvIHByaW5jaXBhbCBjb24gZ3JhZGllbnRlIG1ldMOhbGljbyAtLT4KICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjEzMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI3JpbmcpIiBzdHJva2Utd2lkdGg9IjciIHN0eWxlPSJmaWxsOm5vbmU7Y29sb3I6cmdiKDI1NSwgMjU1LCAyNTUpO3N0cm9rZS13aWR0aDo3cHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7b3BhY2l0eToxO2ZvbnQtZmFtaWx5OiZxdW90O0FudGhyb3BpYyBTYW5zJnF1b3Q7LCAtYXBwbGUtc3lzdGVtLCBCbGlua01hY1N5c3RlbUZvbnQsICZxdW90O1NlZ29lIFVJJnF1b3Q7LCBzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxNnB4O2ZvbnQtd2VpZ2h0OjQwMDt0ZXh0LWFuY2hvcjpzdGFydDtkb21pbmFudC1iYXNlbGluZTphdXRvIi8+CgogIDwhLS0gUmVmbGVqbyBzdXBlcmlvciBkZWwgY8OtcmN1bG8gKGFyY28gZGUgbHV6KSAtLT4KICA8cGF0aCBkPSJNIDEwMiAxNTggQSAxMzAgMTMwIDAgMCAxIDI5OCAxNTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2E4ZWVmZiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC4zNSIgbWFzaz0idXJsKCNpbWFnaW5lLXRleHQtZ2Fwcy01bXlzdWMpIiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTpyZ2IoMTY4LCAyMzgsIDI1NSk7Y29sb3I6cmdiKDI1NSwgMjU1LCAyNTUpO3N0cm9rZS13aWR0aDoyLjVweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46bWl0ZXI7b3BhY2l0eTowLjM1O2ZvbnQtZmFtaWx5OiZxdW90O0FudGhyb3BpYyBTYW5zJnF1b3Q7LCAtYXBwbGUtc3lzdGVtLCBCbGlua01hY1N5c3RlbUZvbnQsICZxdW90O1NlZ29lIFVJJnF1b3Q7LCBzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxNnB4O2ZvbnQtd2VpZ2h0OjQwMDt0ZXh0LWFuY2hvcjpzdGFydDtkb21pbmFudC1iYXNlbGluZTphdXRvIi8+CgogIDwhLS0gU8OtbWJvbG8gJCBjb24gZ3JhZGllbnRlIHBsYXRlYWRvIC0tPgogIDx0ZXh0IHg9IjIwMCIgeT0iMjQ4IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxODAiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9InVybCgjZG9sbGFyKSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3R5bGU9InN0cm9rZTpub25lO2NvbG9yOnJnYigyNTUsIDI1NSwgMjU1KTtzdHJva2Utd2lkdGg6MXB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO29wYWNpdHk6MTtmb250LWZhbWlseTpHZW9yZ2lhLCBzZXJpZjtmb250LXNpemU6MTgwcHg7Zm9udC13ZWlnaHQ6NzAwO3RleHQtYW5jaG9yOm1pZGRsZTtkb21pbmFudC1iYXNlbGluZTphdXRvIj4kPC90ZXh0PgoKICA8IS0tIFJlZmxlam8gZXNwZWN1bGFyIHNvYnJlIGVsICQgKGJyaWxsbyBzdXBlcmlvciBpenF1aWVyZG8pIC0tPgogIDx0ZXh0IHg9IjIwMCIgeT0iMjQ4IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxODAiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjA4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTpyZ2IoMjU1LCAyNTUsIDI1NSk7Y29sb3I6cmdiKDI1NSwgMjU1LCAyNTUpO3N0cm9rZS13aWR0aDoxcHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7b3BhY2l0eTowLjA4O2ZvbnQtZmFtaWx5Okdlb3JnaWEsIHNlcmlmO2ZvbnQtc2l6ZToxODBweDtmb250LXdlaWdodDo3MDA7dGV4dC1hbmNob3I6bWlkZGxlO2RvbWluYW50LWJhc2VsaW5lOmF1dG8iPiQ8L3RleHQ+CgogIDwhLS0gU2hpbmUgb3ZlcmxheSBlc3F1aW5hIHN1cGVyaW9yIGl6cXVpZXJkYSAtLT4KICA8ZWxsaXBzZSBjeD0iMTQ1IiBjeT0iMTMwIiByeD0iNzAiIHJ5PSI0NSIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4wMyIgdHJhbnNmb3JtPSJyb3RhdGUoLTIwIDE0NSAxMzApIiBzdHlsZT0iZmlsbDpyZ2IoMjU1LCAyNTUsIDI1NSk7c3Ryb2tlOm5vbmU7Y29sb3I6cmdiKDI1NSwgMjU1LCAyNTUpO3N0cm9rZS13aWR0aDoxcHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7b3BhY2l0eTowLjAzO2ZvbnQtZmFtaWx5OiZxdW90O0FudGhyb3BpYyBTYW5zJnF1b3Q7LCAtYXBwbGUtc3lzdGVtLCBCbGlua01hY1N5c3RlbUZvbnQsICZxdW90O1NlZ29lIFVJJnF1b3Q7LCBzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxNnB4O2ZvbnQtd2VpZ2h0OjQwMDt0ZXh0LWFuY2hvcjpzdGFydDtkb21pbmFudC1iYXNlbGluZTphdXRvIi8+Cjwvc3ZnPg==">
 </head>
 <body>
 
@@ -786,61 +845,80 @@ html, body {
   <!-- ── INICIO ── -->
   <div class="sec-page active" id="sec-inicio">
 
-    <!-- Balance cards -->
-    <div class="balance-row" id="balanceRow">
-      <div class="balance-card bc-ing">
-        <div class="card-lbl">Ingresos mes</div>
-        <div class="card-val positive" id="cardIngMes">$ 0</div>
-        <div class="card-sub" id="cardIngMesLabel">—</div>
+    <!-- Saldo neto con barra de ahorro -->
+    <div class="saldo-card">
+      <div class="saldo-top">
+        <div class="saldo-monto-wrap">
+          <div class="saldo-lbl">Saldo neto</div>
+          <div class="saldo-monto" id="cardSaldo">$ 0</div>
+        </div>
+        <div class="saldo-pct-wrap">
+          <div class="saldo-pct" id="cardSaldoPct">—</div>
+          <div class="saldo-pct-lbl">tasa de ahorro</div>
+        </div>
       </div>
-      <div class="balance-card bc-saldo">
-        <div class="card-lbl">Saldo neto</div>
-        <div class="card-val neutral" id="cardSaldo">$ 0</div>
-        <div class="card-sub">ingresos − gastos</div>
-      </div>
-    </div>
-    <div class="balance-row" style="margin-bottom:18px">
-      <div class="balance-card bc-ahorro" style="grid-column:1/-1">
-        <div class="card-lbl">Tasa de ahorro</div>
-        <div class="card-val" id="cardAhorro" style="font-size:.95rem">—</div>
-        <div class="card-sub" id="cardAhorroSub">—</div>
+      <div class="ahorro-bar-wrap">
+        <div class="ahorro-bar-track">
+          <div class="ahorro-bar-fill" id="ahorroBarFill" style="width:0%"></div>
+        </div>
       </div>
     </div>
 
-    <div class="cards-grid" id="summaryGrid">
-      <div class="card c1">
-        <div class="card-lbl">Total año</div>
-        <div class="card-val" id="cardTotal">$ 0</div>
-        <div class="card-sub" id="cardYear">—</div>
+    <!-- Ingresos y gastos del mes -->
+    <div class="mini-cards">
+      <div class="mini-card ing">
+        <div class="card-lbl">Ingresos mes</div>
+        <div class="card-val ing" id="cardIngMes">$ 0</div>
+        <div class="card-sub" id="cardIngMesLabel">—</div>
       </div>
-      <div class="card c2">
-        <div class="card-lbl">Este mes</div>
-        <div class="card-val" id="cardMes">$ 0</div>
+      <div class="mini-card gas">
+        <div class="card-lbl">Gastos mes</div>
+        <div class="card-val gas" id="cardMes">$ 0</div>
         <div class="card-sub" id="cardMesLabel">—</div>
-      </div>
-      <div class="card c3">
-        <div class="card-lbl">Prom. mensual</div>
-        <div class="card-val" id="cardAvg">$ 0</div>
-      </div>
-      <div class="card c4">
-        <div class="card-lbl">Registros</div>
-        <div class="card-val" id="cardCount">0</div>
-        <div class="card-sub">este mes</div>
       </div>
     </div>
 
     <div class="alerts" id="alertsSection"></div>
 
-    <div class="chart-card" id="chartTortaCard">
-      <div class="chart-lbl">Por categoría — mes actual</div>
-      <div style="position:relative;height:200px">
-        <canvas id="chartTorta"></canvas>
+    <!-- Dos doughnuts lado a lado -->
+    <div class="donuts-row">
+      <div class="donut-card">
+        <div class="donut-lbl">Gastos</div>
+        <div class="donut-wrap" id="donutGastosWrap">
+          <div class="donut-empty" id="donutGastosEmpty">Sin gastos<br>este mes</div>
+          <canvas id="chartTorta" style="display:none"></canvas>
+        </div>
+      </div>
+      <div class="donut-card">
+        <div class="donut-lbl">Ingresos</div>
+        <div class="donut-wrap" id="donutIngresosWrap">
+          <div class="donut-empty" id="donutIngresosEmpty">Sin ingresos<br>este mes</div>
+          <canvas id="chartIngTorta" style="display:none"></canvas>
+        </div>
       </div>
     </div>
 
+    <!-- Cards secundarias -->
+    <div class="cards-grid" id="summaryGrid" style="margin-bottom:14px">
+      <div class="card c1">
+        <div class="card-lbl">Total año</div>
+        <div class="card-val" id="cardTotal">$ 0</div>
+        <div class="card-sub" id="cardYear">—</div>
+      </div>
+      <div class="card c3">
+        <div class="card-lbl">Prom. mensual</div>
+        <div class="card-val" id="cardAvg">$ 0</div>
+      </div>
+      <div class="card c4" style="grid-column:1/-1">
+        <div class="card-lbl">Registros este mes</div>
+        <div class="card-val" id="cardCount">0</div>
+      </div>
+    </div>
+
+    <!-- Barras ingresos vs gastos -->
     <div class="chart-card">
       <div class="chart-lbl">Ingresos vs Gastos — últimos 6 meses</div>
-      <div style="position:relative;height:190px">
+      <div style="position:relative;height:170px">
         <canvas id="chartBarras"></canvas>
       </div>
     </div>
@@ -1152,7 +1230,7 @@ let ingTipoSel  = 'sueldo';  // 'sueldo' | 'transferencia'
 let historialMes = new Date();
 let histFiltro  = 'todas';
 let compTabActual = 'pendientes';
-let chartTorta = null, chartBarras = null;
+let chartTorta = null, chartIngTorta = null, chartBarras = null;
 
 // ════════════════════════════════════════════════
 // INIT
@@ -1190,13 +1268,49 @@ function switchTab(name) {
 }
 
 function forceRebuildCharts() {
-  // Destruir instancias y reemplazar canvas para garantizar render limpio
-  if (chartTorta)  { chartTorta.destroy();  chartTorta  = null; }
-  if (chartBarras) { chartBarras.destroy(); chartBarras = null; }
+  if (chartTorta)    { chartTorta.destroy();    chartTorta    = null; }
+  if (chartIngTorta) { chartIngTorta.destroy(); chartIngTorta = null; }
+  if (chartBarras)   { chartBarras.destroy();   chartBarras   = null; }
   const wT = document.getElementById('chartTorta');
-  if (wT) wT.parentNode.innerHTML = '<canvas id="chartTorta"></canvas>';
+  if (wT) wT.parentNode.innerHTML = '<div class="donut-empty" id="donutGastosEmpty" style="display:none">Sin gastos<br>este mes</div><canvas id="chartTorta"></canvas>';
+  const wI = document.getElementById('chartIngTorta');
+  if (wI) wI.parentNode.innerHTML = '<div class="donut-empty" id="donutIngresosEmpty" style="display:none">Sin ingresos<br>este mes</div><canvas id="chartIngTorta"></canvas>';
   const wB = document.getElementById('chartBarras');
   if (wB) wB.parentNode.innerHTML = '<canvas id="chartBarras"></canvas>';
+}
+
+function renderChartIngTorta(thisYM) {
+  if (chartIngTorta) { chartIngTorta.destroy(); chartIngTorta = null; }
+  const wI = document.getElementById('chartIngTorta').parentNode;
+  wI.innerHTML = '<div class="donut-empty" id="donutIngresosEmpty" style="display:none">Sin ingresos<br>este mes</div><canvas id="chartIngTorta"></canvas>';
+  const ING_TIPOS = { sueldo: { nombre: 'Sueldo', color: '#34d399' }, transferencia: { nombre: 'Transf.', color: '#38bdf8' } };
+  const byTipo = {};
+  ingresos.filter(i => i.fecha.startsWith(thisYM)).forEach(i => {
+    byTipo[i.tipo] = (byTipo[i.tipo]||0) + i.monto;
+  });
+  const tipos = Object.keys(byTipo);
+  const canvasEl = document.getElementById('chartIngTorta');
+  if (tipos.length === 0) {
+    canvasEl.style.display = 'none';
+    document.getElementById('donutIngresosEmpty').style.display = 'flex';
+    return;
+  }
+  canvasEl.style.display = 'block';
+  chartIngTorta = new Chart(canvasEl, {
+    type: 'doughnut',
+    data: {
+      labels: tipos.map(t => ING_TIPOS[t]?.nombre || t),
+      datasets: [{ data: tipos.map(t => byTipo[t]), backgroundColor: tipos.map(t => ING_TIPOS[t]?.color || '#94a3b8'), borderWidth: 0, hoverOffset: 4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${fmt(ctx.parsed)}` } }
+      },
+      cutout: '65%'
+    }
+  });
 }
 
 // ════════════════════════════════════════════════
@@ -1402,42 +1516,45 @@ function renderDashboard() {
   const totalMes   = gastosMes.reduce((s,g) => s+g.monto, 0);
   const meses      = new Set(gastos.map(g => g.fecha.substring(0,7)));
   const avg        = meses.size > 0 ? gastos.reduce((s,g) => s+g.monto, 0) / meses.size : 0;
-
-  // Ingresos
-  const ingMes   = ingresos.filter(i => i.fecha.startsWith(thisYM)).reduce((s,i) => s+i.monto, 0);
-  const saldo    = ingMes - totalMes;
+  const ingMes     = ingresos.filter(i => i.fecha.startsWith(thisYM)).reduce((s,i) => s+i.monto, 0);
+  const saldo      = ingMes - totalMes;
   const tasaAhorro = ingMes > 0 ? (saldo / ingMes) * 100 : null;
 
-  // Cards gastos
-  document.getElementById('cardTotal').textContent    = fmt(totalAno);
-  document.getElementById('cardYear').textContent     = now.getFullYear();
-  document.getElementById('cardMes').textContent      = fmt(totalMes);
-  document.getElementById('cardMesLabel').textContent = mesNombre(now.getMonth());
-  document.getElementById('cardAvg').textContent      = fmt(avg);
-  document.getElementById('cardCount').textContent    = gastosMes.length;
+  // Saldo neto
+  const saldoEl = document.getElementById('cardSaldo');
+  saldoEl.textContent = (saldo >= 0 ? '' : '− ') + fmt(Math.abs(saldo));
+  saldoEl.className = 'saldo-monto ' + (saldo >= 0 ? 'positive' : 'negative');
 
-  // Cards balance
+  // Porcentaje + barra de ahorro
+  const pctEl  = document.getElementById('cardSaldoPct');
+  const barEl  = document.getElementById('ahorroBarFill');
+  if (tasaAhorro !== null) {
+    const pct = Math.max(0, Math.min(100, tasaAhorro));
+    pctEl.textContent = tasaAhorro.toFixed(1) + '%';
+    pctEl.style.color = tasaAhorro >= 51 ? 'var(--accent3)' : tasaAhorro >= 11 ? 'var(--warn)' : 'var(--danger)';
+    barEl.style.width = pct + '%';
+    barEl.style.background = tasaAhorro >= 51 ? 'var(--accent3)' : tasaAhorro >= 11 ? 'var(--warn)' : 'var(--danger)';
+  } else {
+    pctEl.textContent = '—';
+    pctEl.style.color = 'var(--text3)';
+    barEl.style.width = '0%';
+  }
+
+  // Mini cards
   document.getElementById('cardIngMes').textContent      = fmt(ingMes);
   document.getElementById('cardIngMesLabel').textContent = mesNombre(now.getMonth());
-  const saldoEl = document.getElementById('cardSaldo');
-  saldoEl.textContent = fmt(Math.abs(saldo));
-  saldoEl.className = 'card-val ' + (saldo >= 0 ? 'positive' : 'negative');
+  document.getElementById('cardMes').textContent         = fmt(totalMes);
+  document.getElementById('cardMesLabel').textContent    = mesNombre(now.getMonth());
 
-  const ahorroEl  = document.getElementById('cardAhorro');
-  const ahorroSub = document.getElementById('cardAhorroSub');
-  if (tasaAhorro !== null) {
-    const cls = tasaAhorro >= 20 ? 'good' : tasaAhorro >= 0 ? 'mid' : 'bad';
-    ahorroEl.innerHTML = `<span class="ahorro-badge ${cls}">${tasaAhorro.toFixed(1)}%</span>`;
-    ahorroSub.textContent = tasaAhorro >= 0
-      ? `Ahorrás ${fmt(saldo)} de ${fmt(ingMes)}`
-      : `Déficit de ${fmt(Math.abs(saldo))}`;
-  } else {
-    ahorroEl.innerHTML = `<span style="color:var(--text3);font-size:.82rem">Registrá ingresos para ver tu tasa</span>`;
-    ahorroSub.textContent = '';
-  }
+  // Cards secundarias
+  document.getElementById('cardTotal').textContent  = fmt(totalAno);
+  document.getElementById('cardYear').textContent   = now.getFullYear();
+  document.getElementById('cardAvg').textContent    = fmt(avg);
+  document.getElementById('cardCount').textContent  = gastosMes.length;
 
   renderAlertas(totalMes);
   renderChartTorta(gastosMes);
+  renderChartIngTorta(thisYM);
   renderChartBarras();
 }
 
@@ -1486,16 +1603,21 @@ function renderAlertas(totalMes) {
 }
 
 function renderChartTorta(gastosMes) {
-  const card = document.getElementById('chartTortaCard');
+  const emptyEl  = document.getElementById('donutGastosEmpty');
   if (chartTorta) { chartTorta.destroy(); chartTorta = null; }
+  // Reemplazar canvas
+  const wrapT = document.getElementById('chartTorta').parentNode;
+  wrapT.innerHTML = '<div class="donut-empty" id="donutGastosEmpty" style="display:none">Sin gastos<br>este mes</div><canvas id="chartTorta"></canvas>';
   const byCat = {};
   gastosMes.forEach(g => { byCat[g.categoria] = (byCat[g.categoria]||0)+g.monto; });
   const cats = Object.keys(byCat);
-  if (cats.length === 0) { card.style.display = 'none'; return; }
-  card.style.display = '';
-  // Reemplazar canvas para limpiar estado residual
-  const wrapT = document.getElementById('chartTorta').parentNode;
-  wrapT.innerHTML = '<canvas id="chartTorta"></canvas>';
+  const canvasEl = document.getElementById('chartTorta');
+  if (cats.length === 0) {
+    canvasEl.style.display = 'none';
+    document.getElementById('donutGastosEmpty').style.display = 'flex';
+    return;
+  }
+  canvasEl.style.display = 'block';
   const labels = cats.map(c => CATEGORIAS.find(x => x.id===c)?.nombre||c);
   const data   = cats.map(c => byCat[c]);
   const colors = cats.map(c => CATEGORIAS.find(x => x.id===c)?.color||'#94a3b8');
@@ -1506,9 +1628,10 @@ function renderChartTorta(gastosMes) {
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'right', labels: { color: '#7e95b4', font: { family: 'Figtree', size: 11 }, boxWidth: 11 } },
-        tooltip: { callbacks: { label: ctx => ` ${fmt(ctx.parsed)}` } }
-      }
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${fmt(ctx.parsed)}` } }
+      },
+      cutout: '65%'
     }
   });
 }
