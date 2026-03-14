@@ -2,7 +2,7 @@
   "name": "MisGastos",
   "short_name": "MisGastos",
   "description": "Control de gastos e ingresos personales",
-  "start_url": "./MisGastos.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0f1a",
