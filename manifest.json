@@ -9,10 +9,16 @@
   "theme_color": "#0a0f1a",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "https://marcioratzkov-lang.github.io/misgastos/icon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "https://marcioratzkov-lang.github.io/misgastos/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
